@@ -1,0 +1,34 @@
+name: 'Batch Model Deploy Action'
+description: 'Action to Build and Deploy Batch models'
+inputs:
+  repo_pr: 
+    description: 'PR Repository'
+    required: true
+    default: '-'
+
+  git_user:  
+    description: 'Bot Git User'
+    required: true
+    default: '-'
+
+  git_email: 
+    description: 'Bot Git Email'
+    required: true
+    default: '-'
+runs:
+  using: "composite"
+  steps:    
+    - uses: olxbr/cross-mlops-model-doc-validator-action@main
+
+    - uses: olxbr/cross-mlops-build-batch-model-action@main
+      with:
+        repo: ${{ inputs.repo_pr }}
+        git_user: ${{ inputs.git_user }}
+        git_email: ${{ inputs.git_email }}
+
+    - name: Request Deploy
+      uses: olxbr/cross-mlops-deploy-request-action@master
+      with:
+        repo_pr: ${{ inputs.repo_pr }}
+        git_user: ${{ inputs.git_user }}
+        git_email: ${{ inputs.git_email }}
